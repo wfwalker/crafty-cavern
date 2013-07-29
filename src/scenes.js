@@ -49,7 +49,6 @@ Crafty.scene('Game', function() {
 		for (var y = 0; y < Game.map_grid.height; y++) {
 			if (Math.random() < 0.01) {
 				if (Crafty('Monster').length < max_monsters && !this.occupied[x][y]) {
-					console.log("making monster");
 					Crafty.e('Monster').at(x, y);
 				}
 			}
