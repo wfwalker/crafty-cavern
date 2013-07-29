@@ -23,7 +23,11 @@ Crafty.scene('Game', function() {
 		for (var y = 0; y < Game.map_grid.height; y++) {
 			var at_edge = x == 0 || x == Game.map_grid.width - 1 || y == 0 || y == Game.map_grid.height - 1;
 
-			if (Math.random() < 0.06 && !this.occupied[x][y]) {
+			if (at_edge) {
+				// Place a wall entity at the current tile
+				Crafty.e('Wall').at(x, y);
+				this.occupied[x][y] = true;
+			} else if (Math.random() < 0.06 && !this.occupied[x][y]) {
 				// Place a bush entity at the current tile
 				Crafty.e('Tree').at(x, y);
 				this.occupied[x][y] = true;

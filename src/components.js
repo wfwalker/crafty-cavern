@@ -28,6 +28,14 @@ Crafty.c('Actor', {
 });
 
 // A Tree stops motion and can be cut down by the player
+Crafty.c('Wall', {
+  init: function() {
+    this.requires('Actor, Color, Solid')
+      .color('rgb(255, 116, 2)'); //FF6402
+  },
+});
+
+// A Tree stops motion and can be cut down by the player
 Crafty.c('Tree', {
   init: function() {
     this.requires('Actor, platoTree, Solid');
