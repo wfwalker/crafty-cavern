@@ -37,8 +37,8 @@ Crafty.c('Tree', {
 // A Monster causes all kinds of trouble
 Crafty.c('Monster', {
   init: function() {
-    this.requires('Actor, platoMonster, Solid');
-  },
+    this.requires('Actor, platoMonster, Solid');    
+  }
 });
 
 // A Chest has either gold or treasure items inside it
@@ -73,7 +73,22 @@ Crafty.c('PlayerCharacter', {
     this.requires('Actor, Fourway, platoPlayer, Collision')
       .fourway(4)
       .onHit('Solid', this.stopMovement)
-      .onHit('Chest', this.visitChest);   
+      .onHit('Chest', this.visitChest)
+      .bind('Moved', this.attractMonsters);
+  },
+
+  attractMonsters: function() {
+    var player = this;
+    console.log("player " + player.at().x + ", " + player.at().y);
+
+    Crafty('Monster').each(function (index) {
+      console.log("monster " + this.at().x + ", " + this.at().y);
+      var towardPlayerX = (player.at().x > this.at().x) ? 1 : -1;
+      var towardPlayerY = (player.at().y > this.at().y) ? 1 : -1;
+
+      this.x = this.x + towardPlayerX;
+      this.y = this.y + towardPlayerY;
+    });
   },
 
   // Stops the movement
