@@ -45,8 +45,16 @@ Crafty.c('Tree', {
 // A Monster causes all kinds of trouble
 Crafty.c('Monster', {
   init: function() {
+    // set up hit points for combat
+    this._hitPoints = 1 + (5 * Math.random() | 0);
+
     this.requires('Actor, platoMonster, Fourway, Solid, Collision')
+      .onHit('PlayerCharacter', this.attackPlayerCharacter)
       .onHit('Solid', this.stopMovement);
+  },
+
+  attackPlayerCharacter: function(data) {
+    console.log("monster with " + this._hitPoints + " attack Player with " + data[0].obj._hitPoints + " hitpoints");
   },
 
   // Stops the movement
@@ -84,8 +92,11 @@ Crafty.c('Castle', {
 // This is the player-controlled character
 Crafty.c('PlayerCharacter', {
   init: function() {
-    this._hitPoints = 1;
-    this._gold = 0;
+    // from the turbo pascal: "exp := 24.0; arrows := 20; gold := 10; which_swd := 0;"
+
+    this._hitPoints = 24;
+    this._gold = 10;
+    this._arrows = 10;
     this._inUseItems = [];
     this._unusedItems = [];
 
@@ -93,6 +104,7 @@ Crafty.c('PlayerCharacter', {
     this.requires('Actor, Fourway, platoPlayer, Solid, Collision')
       .fourway(4)
       .onHit('Solid', this.stopMovement)
+      .onHit('Monster', this.attackMonster)
       .onHit('Chest', this.visitChest)
       .bind('Moved', this.attractMonsters);
   },
@@ -116,6 +128,11 @@ Crafty.c('PlayerCharacter', {
       this.x += this._movement.x;
       this.y += this._movement.y;
     });
+  },
+
+  // Attacks the monster
+  attackMonster: function(data) {
+    console.log("player with " + this._hitPoints + " attack monster with " + data[0].obj._hitPoints + " hitpoints");
   },
 
   // Stops the movement
