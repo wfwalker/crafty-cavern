@@ -42,19 +42,31 @@ Crafty.c('Tree', {
   },
 });
 
+Crafty.c("Combatant", {
+  _points: 0,
+
+  points: function (inPoints) {
+    if (!inPoints) return this._points;
+    this._points = inPoints;
+    this.trigger("Change");
+    return this;
+  }
+
+});
+
 // A Monster causes all kinds of trouble
 Crafty.c('Monster', {
   init: function() {
-    // set up hit points for combat
-    this._hitPoints = 1 + (5 * Math.random() | 0);
-
-    this.requires('Actor, platoMonster, Fourway, Solid, Collision')
+    this.requires('Actor, platoMonster, Combatant, Fourway, Solid, Collision')
       .onHit('PlayerCharacter', this.attackPlayerCharacter)
       .onHit('Solid', this.stopMovement);
+
+    // set up points for combat
+    this.points(1 + ((5 * Math.random()) | 0));
   },
 
   attackPlayerCharacter: function(data) {
-    console.log("monster with " + this._hitPoints + " attack Player with " + data[0].obj._hitPoints + " hitpoints");
+    console.log("monster with " + this.points() + " attack Player with " + data[0].obj.points());
   },
 
   // Stops the movement
@@ -94,19 +106,20 @@ Crafty.c('PlayerCharacter', {
   init: function() {
     // from the turbo pascal: "exp := 24.0; arrows := 20; gold := 10; which_swd := 0;"
 
-    this._hitPoints = 24;
     this._gold = 10;
     this._arrows = 10;
     this._inUseItems = [];
     this._unusedItems = [];
 
       // creates a player that moves four ways and stops on collision with solid actors
-    this.requires('Actor, Fourway, platoPlayer, Solid, Collision')
+    this.requires('Actor, Fourway, platoPlayer, Solid, Combatant, Collision')
       .fourway(4)
       .onHit('Solid', this.stopMovement)
       .onHit('Monster', this.attackMonster)
       .onHit('Chest', this.visitChest)
       .bind('Moved', this.attractMonsters);
+
+    this.points(24);
   },
 
   attractMonsters: function() {
@@ -132,7 +145,7 @@ Crafty.c('PlayerCharacter', {
 
   // Attacks the monster
   attackMonster: function(data) {
-    console.log("player with " + this._hitPoints + " attack monster with " + data[0].obj._hitPoints + " hitpoints");
+    console.log("player with " + this.points() + " attack monster with " + data[0].obj.points());
   },
 
   // Stops the movement
