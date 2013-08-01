@@ -50,8 +50,15 @@ Crafty.c("Combatant", {
     this._points = inPoints;
     this.trigger("Change");
     return this;
-  }
+  },
 
+  sufferDamage: function (inDamagePoints) {
+    this._points = this._points - inDamagePoints;
+    this.trigger("Change");
+    if (this._points <= 0) {
+      this.trigger("Died");
+    }
+  }
 });
 
 // A Monster causes all kinds of trouble
@@ -59,14 +66,22 @@ Crafty.c('Monster', {
   init: function() {
     this.requires('Actor, platoMonster, Combatant, Fourway, Solid, Collision')
       .onHit('PlayerCharacter', this.attackPlayerCharacter)
+      .bind('Died', this.monsterDied)
       .onHit('Solid', this.stopMovement);
 
     // set up points for combat
     this.points(1 + ((5 * Math.random()) | 0));
   },
 
+  monsterDied() {
+    this.destroy();
+    Crafty.trigger('MonsterKilled', this);    
+    console.log("monster died"); 
+  },
+
   attackPlayerCharacter: function(data) {
     console.log("monster with " + this.points() + " attack Player with " + data[0].obj.points());
+    data[0].obj.sufferDamage(1);
   },
 
   // Stops the movement
@@ -117,6 +132,9 @@ Crafty.c('PlayerCharacter', {
       .onHit('Solid', this.stopMovement)
       .onHit('Monster', this.attackMonster)
       .onHit('Chest', this.visitChest)
+      .bind('Change', function() {
+        document.getElementById('points').innerHTML = this.points();
+      })
       .bind('Moved', this.attractMonsters);
 
     this.points(24);
@@ -146,6 +164,7 @@ Crafty.c('PlayerCharacter', {
   // Attacks the monster
   attackMonster: function(data) {
     console.log("player with " + this.points() + " attack monster with " + data[0].obj.points());
+    data[0].obj.sufferDamage(1);
   },
 
   // Stops the movement
