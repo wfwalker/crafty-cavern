@@ -19,6 +19,20 @@ Crafty.c('Grid', {
   }
 });
 
+Crafty.c('Log', {
+  _logElement: null,
+
+  init: function() {
+    this._logElement = document.getElementById('log');
+  },
+
+  log: function(message) {
+    this._logElement.value += "\n";
+    this._logElement.value += message;
+  },
+
+});
+
 // An "Actor" is an entity that is drawn in 2D on canvas
 //  via our logical coordinate grid
 Crafty.c('Actor', {
@@ -72,7 +86,7 @@ Crafty.c("Combatant", {
 // A Monster causes all kinds of trouble
 Crafty.c('Monster', {
   init: function() {
-    this.requires('Actor, platoMonster, Combatant, Fourway, Solid, Collision')
+    this.requires('Actor, platoMonster, Combatant, Fourway, Solid, Collision, Log')
       .onHit('PlayerCharacter', this.attackPlayerCharacter)
       .bind('Died', this.monsterDied)
       .onHit('Solid', this.stopMovement);
@@ -84,11 +98,12 @@ Crafty.c('Monster', {
   monsterDied: function() {
     this.destroy();
     Crafty.trigger('MonsterKilled', this);    
-    console.log("monster died"); 
+    this.log("You have slain the monster"); 
   },
 
   attackPlayerCharacter: function(data) {
-    console.log("monster with " + this.points() + " attack Player with " + data[0].obj.points());
+    // this.log("monster with " + this.points() + " attack Player with " + data[0].obj.points());
+    this.log("The monster attacks you");
     data[0].obj.sufferDamage(1);
   },
 
@@ -136,7 +151,7 @@ Crafty.c('PlayerCharacter', {
     this._unusedItems = [];
 
       // creates a player that moves four ways and stops on collision with solid actors
-    this.requires('Actor, Fourway, platoPlayer, Solid, Combatant, Collision')
+    this.requires('Actor, Fourway, platoPlayer, Solid, Combatant, Collision, Log')
       .fourway(4)
       .onHit('Tree', this.fellTree)
       .onHit('Monster', this.attackMonster)
@@ -152,7 +167,7 @@ Crafty.c('PlayerCharacter', {
   },
 
   fellTree: function(data) {
-    console.log("fell tree");
+    this.log("You felled the tree");
     tree = data[0].obj;
     tree.fell();
   },
@@ -160,7 +175,7 @@ Crafty.c('PlayerCharacter', {
   playerDied: function() {
     this.destroy();
     Crafty.trigger('PlayerKilled', this);    
-    console.log("player died"); 
+    this.log("You died"); 
   },
 
   attractMonsters: function() {
@@ -186,7 +201,8 @@ Crafty.c('PlayerCharacter', {
 
   // Attacks the monster
   attackMonster: function(data) {
-    console.log("player with " + this.points() + " attack monster with " + data[0].obj.points());
+    // console.log("player with " + this.points() + " attack monster with " + data[0].obj.points());
+    this.log("You hit the monster");
     data[0].obj.sufferDamage(1);
   },
 
@@ -203,6 +219,7 @@ Crafty.c('PlayerCharacter', {
   visitChest: function(data) {
     chest = data[0].obj;
     this._gold = this._gold + chest._gold;
+    this.log("You opened the chest and got " + chest._gold + " gold pieces");
     document.getElementById('gold').innerHTML = this._gold;
     chest.collect();
   }  
