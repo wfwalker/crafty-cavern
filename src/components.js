@@ -40,8 +40,16 @@ Crafty.c('Tree', {
   init: function() {
     this.requires('Actor, platoTree, Solid');
   },
+
+  fell: function() {
+    this.destroy();
+    Crafty.trigger('TreeFelled', this);    
+  }
+
 });
 
+// A combatant has a number of points which is decremented upon suffering damage.
+// When the point count decrements to zero, the combatant dies
 Crafty.c("Combatant", {
   _points: 0,
 
@@ -73,7 +81,7 @@ Crafty.c('Monster', {
     this.points(1 + ((5 * Math.random()) | 0));
   },
 
-  monsterDied() {
+  monsterDied: function() {
     this.destroy();
     Crafty.trigger('MonsterKilled', this);    
     console.log("monster died"); 
@@ -86,7 +94,6 @@ Crafty.c('Monster', {
 
   // Stops the movement
   stopMovement: function() {
-    console.log("monster stopMovement");
     this._speed = 0;
     if (this._movement) {
       this.x -= this._movement.x;
@@ -97,10 +104,11 @@ Crafty.c('Monster', {
 });
 
 // A Chest has either gold or treasure items inside it
+// When the player visits the Chest, it is destroyed.
 Crafty.c('Chest', {
   init: function() {
     this._gold = (1 + 50 * Math.random()) | 0;
-    this.requires('Actor, platoChest');
+    this.requires('Actor, platoChest, Solid');
   },
 
   collect: function() {
@@ -109,7 +117,8 @@ Crafty.c('Chest', {
   }
 });
 
-// A castle is a tile on the grid that the PC must visit in order to win the game
+// A castle is a tile on the grid where the player is safe from attack and
+// where the Player can purchase Arrows and other goodies.
 Crafty.c('Castle', {
   init: function() {
     this.requires('Actor, platoCastle');
@@ -129,15 +138,29 @@ Crafty.c('PlayerCharacter', {
       // creates a player that moves four ways and stops on collision with solid actors
     this.requires('Actor, Fourway, platoPlayer, Solid, Combatant, Collision')
       .fourway(4)
-      .onHit('Solid', this.stopMovement)
+      .onHit('Tree', this.fellTree)
       .onHit('Monster', this.attackMonster)
       .onHit('Chest', this.visitChest)
+      .onHit('Solid', this.stopMovement)
+      .bind('Died', this.playerDied)
       .bind('Change', function() {
         document.getElementById('points').innerHTML = this.points();
       })
       .bind('Moved', this.attractMonsters);
 
     this.points(24);
+  },
+
+  fellTree: function(data) {
+    console.log("fell tree");
+    tree = data[0].obj;
+    tree.fell();
+  },
+
+  playerDied: function() {
+    this.destroy();
+    Crafty.trigger('PlayerKilled', this);    
+    console.log("player died"); 
   },
 
   attractMonsters: function() {
@@ -169,7 +192,6 @@ Crafty.c('PlayerCharacter', {
 
   // Stops the movement
   stopMovement: function() {
-    console.log("player stopMovement");
     this._speed = 0;
     if (this._movement) {
       this.x -= this._movement.x;
