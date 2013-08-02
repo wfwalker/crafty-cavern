@@ -1,4 +1,21 @@
 
+// Helper method
+
+function _placeElementRandomly(inOccupied, inElementName) {
+
+	while (true) {
+		var x = (Math.random() * Game.map_grid.width) | 0;
+		var y = (Math.random() * Game.map_grid.height) | 0;
+
+		if (! inOccupied[x][y]) {
+			Crafty.e(inElementName).at(x, y);
+			inOccupied[x][y] = true;	
+			console.log("placed " + inElementName + " at " + x + ", " + y);
+			return;				
+		}
+	}
+}
+
 // Game scene
 // -------------
 // Runs the core gameplay loop
@@ -20,7 +37,8 @@ Crafty.scene('Game', function() {
 	Crafty.viewport.follow(this.player, 0, 0);		
 	this.occupied[this.player.at().x][this.player.at().y] = true;
 
-	// Place a tree at every edge square on our grid of 16x16 tiles
+	// Place a wall at every edge square on our grid
+	// Place random trees throughout the map
 	for (var x = 0; x < Game.map_grid.width; x++) {
 		for (var y = 0; y < Game.map_grid.height; y++) {
 			var at_edge = x == 0 || x == Game.map_grid.width - 1 || y == 0 || y == Game.map_grid.height - 1;
@@ -37,40 +55,19 @@ Crafty.scene('Game', function() {
 		}
 	}
 
-	// Generate up to two castles on the map in random locations
-	var max_castles = 2;
-	for (var x = 0; x < Game.map_grid.width; x++) {
-		for (var y = 0; y < Game.map_grid.height; y++) {
-			if (Math.random() < 0.02) {
-				if (Crafty('Castle').length < max_castles && !this.occupied[x][y]) {
-					Crafty.e('Castle').at(x, y);
-				}
-			}
-		}
+	// Generate some castles in random locations
+	for (var castleCount = 0; castleCount < 2; castleCount++) {
+		_placeElementRandomly(this.occupied, 'Castle');
 	}
 
-	// Generate up to two castles on the map in random locations
-	var max_monsters = 10;
-	for (var x = 0; x < Game.map_grid.width; x++) {
-		for (var y = 0; y < Game.map_grid.height; y++) {
-			if (Math.random() < 0.01) {
-				if (Crafty('Monster').length < max_monsters && !this.occupied[x][y]) {
-					Crafty.e('Monster').at(x, y);
-				}
-			}
-		}
+	// Generate some monsters in random locations
+	for (var monsterCount = 0; monsterCount < 10; monsterCount++) {
+		_placeElementRandomly(this.occupied, 'Hoplite');
 	}
 
-	// Generate up to five chests on the map in random locations
-	var max_chests = 5;
-	for (var x = 0; x < Game.map_grid.width; x++) {
-		for (var y = 0; y < Game.map_grid.height; y++) {
-			if (Math.random() < 0.02) {
-				if (Crafty('Chest').length < max_chests && !this.occupied[x][y]) {
-					Crafty.e('Chest').at(x, y);
-				}
-			}
-		}
+	// Generate some chests in random locations
+	for (var chestCount = 0; chestCount < 5; chestCount++) {
+		_placeElementRandomly(this.occupied, 'Chest');
 	}
 
 	this.show_victory = this.bind('ChestVisited', function() {
@@ -128,42 +125,27 @@ Crafty.scene('Loading', function(){
 		.attr({ x: 0, y: Game.height()/2 - 24, w: Game.width() })
 		.css({color: '#FF6402'});
 
-  // Load our sprite map image
-  Crafty.load([
-  		'assets/plato/tree.gif',
-  		'assets/plato/castle.gif',
-  		'assets/plato/player.gif',
-  		'assets/plato/chest.gif',
-  		'assets/plato/hoplite.gif'
-  		], function(){
-    // Once the image is loaded...
+	// Load our sprite map image
+	Crafty.load(['assets/caverna.png'], function() {
+		// Once the image is loaded...
 
-    // Define the individual sprites in the image
-    // Each one (spr_tree, etc.) becomes a component
-    // These components' names are prefixed with "spr_"
-    //  to remind us that they simply cause the entity
-    //  to be drawn with a certain sprite
-    Crafty.sprite(32, 'assets/plato/tree.gif', {
-      platoTree:    [0, 0]
-    });
+	    // Define the individual sprites in the image
+	    // Each one (spr_tree, etc.) becomes a component
+	    // These components' names are prefixed with "spr_"
+	    //  to remind us that they simply cause the entity
+	    //  to be drawn with a certain sprite
 
-    Crafty.sprite(32, 'assets/plato/castle.gif', {
-      platoCastle:    [0, 0]
-    });
+		Crafty.sprite('assets/caverna.png', {
+			platoHoplite: [177, 36, 32, 32],
+			platoPlayer: [107, 70, 32, 32],
+			platoCastle: [54, 2, 32, 32],
+			platoTrex: [138, 104, 32, 32],
+			platoTree: [70, 104, 32, 32],
+			platoChest: [122, 2, 32, 32]
+		});
 
-    Crafty.sprite(32, 'assets/plato/player.gif', {
-      platoPlayer:    [0, 0]
-    });
 
-    Crafty.sprite(32, 'assets/plato/chest.gif', {
-      platoChest:     [0, 0]
-    });
-
-    Crafty.sprite(32, 'assets/plato/hoplite.gif', {
-      platoMonster:   [0, 0]
-    });
-
-    // Now that our sprites are ready to draw, start the game
-    Crafty.scene('Game');
-  })
+	    // Now that our sprites are ready to draw, start the game
+	    Crafty.scene('Game');
+	})
 });
