@@ -74,6 +74,11 @@ Crafty.c("Combatant", {
     return this;
   },
 
+  gainPoints: function (inPoints) {
+    this._points = this._points + inPoints;
+    this.trigger("Change");
+  },
+
   sufferDamage: function (inDamagePoints) {
     this._points = this._points - inDamagePoints;
     this.trigger("Change");
@@ -85,6 +90,8 @@ Crafty.c("Combatant", {
 
 // A Monster causes all kinds of trouble
 Crafty.c('Monster', {
+  _name: 'Monster',
+
   init: function() {
     this.requires('Actor, Combatant, Fourway, Solid, Collision, Log')
       .onHit('PlayerCharacter', this.attackPlayerCharacter)
@@ -95,15 +102,20 @@ Crafty.c('Monster', {
     this.points(1 + ((5 * Math.random()) | 0));
   },
 
+  name: function(inName) {
+    if (!inName) return this._name;
+    this._name = inName;
+  },
+
   monsterDied: function() {
     this.destroy();
     Crafty.trigger('MonsterKilled', this);    
-    this.log("You have slain the monster"); 
+    this.log("You have slain the " + this.name()); 
   },
 
   attackPlayerCharacter: function(data) {
     // this.log("monster with " + this.points() + " attack Player with " + data[0].obj.points());
-    this.log("The monster attacks you");
+    this.log('The ' + this.name() + ' attacks you');
     data[0].obj.sufferDamage(1);
   },
 
@@ -121,12 +133,14 @@ Crafty.c('Monster', {
 Crafty.c('TRex', {
   init: function() {
     this.requires('Monster, platoTrex');
+    this.name('T-Rex');
   },
 });
 
 Crafty.c('Hoplite', {
   init: function() {
     this.requires('Monster, platoHoplite');
+    this.name('Hoplite');
   },
 });
 
@@ -182,6 +196,7 @@ Crafty.c('PlayerCharacter', {
     this.log("You felled the tree");
     tree = data[0].obj;
     tree.fell();
+    this.gainPoints(1);
   },
 
   playerDied: function() {
@@ -213,9 +228,9 @@ Crafty.c('PlayerCharacter', {
 
   // Attacks the monster
   attackMonster: function(data) {
-    // console.log("player with " + this.points() + " attack monster with " + data[0].obj.points());
-    this.log("You hit the monster");
-    data[0].obj.sufferDamage(1);
+    monster = data[0].obj
+    this.log("You hit the " + monster.name());
+    monster.sufferDamage(1);
   },
 
   // Stops the movement
