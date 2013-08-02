@@ -86,7 +86,7 @@ Crafty.c("Combatant", {
 // A Monster causes all kinds of trouble
 Crafty.c('Monster', {
   init: function() {
-    this.requires('Actor, platoMonster, Combatant, Fourway, Solid, Collision, Log')
+    this.requires('Actor, Combatant, Fourway, Solid, Collision, Log')
       .onHit('PlayerCharacter', this.attackPlayerCharacter)
       .bind('Died', this.monsterDied)
       .onHit('Solid', this.stopMovement);
@@ -116,6 +116,18 @@ Crafty.c('Monster', {
     }
   },
 
+});
+
+Crafty.c('TRex', {
+  init: function() {
+    this.requires('Monster, platoTrex');
+  },
+});
+
+Crafty.c('Hoplite', {
+  init: function() {
+    this.requires('Monster, platoHoplite');
+  },
 });
 
 // A Chest has either gold or treasure items inside it
