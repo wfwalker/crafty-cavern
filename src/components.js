@@ -222,6 +222,7 @@ Crafty.c('PlayerCharacter', {
     this.log("You opened the chest and got " + chest._gold + " gold pieces");
     document.getElementById('gold').innerHTML = this._gold;
     chest.collect();
+    this.log(Crafty('Chest').length + " chests left");
   }  
 });
 

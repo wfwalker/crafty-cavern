@@ -4,6 +4,8 @@
 // Runs the core gameplay loop
 Crafty.scene('Game', function() {
 
+	console.log("start game scene");
+
 	// A 2D array to keep track of all occupied tiles
 	this.occupied = new Array(Game.map_grid.width);
 	for (var i = 0; i < Game.map_grid.width; i++) {
@@ -73,12 +75,20 @@ Crafty.scene('Game', function() {
 
 	this.show_victory = this.bind('ChestVisited', function() {
 		if (!Crafty('Chest').length) {
+			console.log("Game --> Victory");
 			Crafty.scene('Victory');
 		}
 	});
 
+	this.show_defeat = this.bind('PlayerKilled', function() {
+		console.log("Game --> Defeat");
+		Crafty.scene('Defeat');
+	});
+
 }, function() {
+	console.log("unbind");
 	this.unbind('CastleVisited', this.show_victory);
+	this.unbind('PlayerKilled', this.show_defeat);
 });
 
 // Victory scene
@@ -86,26 +96,37 @@ Crafty.scene('Game', function() {
 // Tells the player when they've won and lets them start a new game
 Crafty.scene('Victory', function() {
 	Crafty.e('2D, DOM, Text')
-		.attr({ x: 0, y: 0 })
-		.text('Victory!').css({color: '#FF6402'});
+		.text('Victory')
+		.attr({ x: 10, y: 10, w: 100, h: 20 })
+		.css({color: '#FF6402'});
 
-	this.restart_game = this.bind('KeyDown', function() {
-		Crafty.scene('Game');
-	});
-}, function() {
-	this.unbind('KeyDown', this.restart_game);
+	console.log("Victory");
+	setTimeout(function() { Crafty.scene('Game'); }, 10000);
+});
+
+// Defeat scene
+// -------------
+// Tells the player when they've lost and lets them start a new game
+Crafty.scene('Defeat', function() {
+	Crafty.e('2D, DOM, Text')
+		.text('Defeat')
+		.attr({ x: 10, y: 10, w: 100, h: 20 })
+		.css({color: '#FF6402'});
+
+	console.log("Defeat");
+	setTimeout(function() { Crafty.scene('Game'); }, 10000);
 });
 
 // Loading scene
 // -------------
 // Handles the loading of binary assets such as images and audio files
 Crafty.scene('Loading', function(){
-  // Draw some text for the player to see in case the file
-  //  takes a noticeable amount of time to load
-  Crafty.e('2D, DOM, Text')
-    .text('Loading...')
-    .attr({ x: 0, y: Game.height()/2 - 24, w: Game.width() })
-    .css({color: '#FF6402'});
+	// Draw some text for the player to see in case the file
+	//  takes a noticeable amount of time to load
+	Crafty.e('2D, DOM, Text')
+		.text('Loading...')
+		.attr({ x: 0, y: Game.height()/2 - 24, w: Game.width() })
+		.css({color: '#FF6402'});
 
   // Load our sprite map image
   Crafty.load([
