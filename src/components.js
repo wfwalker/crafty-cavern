@@ -41,7 +41,7 @@ Crafty.c('Actor', {
   },
 });
 
-// A Tree stops motion and can be cut down by the player
+// A Wall stops motion and cannot be down by the player
 Crafty.c('Wall', {
   init: function() {
     this.requires('Actor, Color, Solid')
@@ -178,7 +178,23 @@ Crafty.c('PlayerCharacter', {
 
       // creates a player that moves four ways and stops on collision with solid actors
     this.requires('Actor, Fourway, platoPlayer, Solid, Combatant, Collision, Log')
-      .fourway(4)
+      .bind('KeyDown', function(e) {
+          this._movement = {x: 0, y: 0};
+
+          if(e.key == Crafty.keys['LEFT_ARROW']) {
+            this._movement.x = -Game.map_grid.tile.width;
+          } else if (e.key == Crafty.keys['RIGHT_ARROW']) {
+            this._movement.x = Game.map_grid.tile.width;
+          } else if (e.key == Crafty.keys['UP_ARROW']) {
+            this._movement.y = -Game.map_grid.tile.height;
+          } else if (e.key == Crafty.keys['DOWN_ARROW']) {
+            this._movement.y = Game.map_grid.tile.height;
+          }
+
+          this.x += this._movement.x;
+          this.y += this._movement.y;
+          this.trigger('Moved');
+      })
       .onHit('Tree', this.fellTree)
       .onHit('Monster', this.attackMonster)
       .onHit('Chest', this.visitChest)
@@ -216,13 +232,14 @@ Crafty.c('PlayerCharacter', {
 
       this._movement = {x: 0, y: 0};
 
-      if (goNorth) { this._movement.y = -4; }
-      else if (goSouth) { this._movement.y = 4; }
-      else if (goEast) { this._movement.x = 4; }
-      else if (goWest) { this._movement.x = -4; }
+      if (goNorth) { this._movement.y = -Game.map_grid.tile.height ; }
+      else if (goSouth) { this._movement.y = Game.map_grid.tile.height; }
+      else if (goEast) { this._movement.x = Game.map_grid.tile.width; }
+      else if (goWest) { this._movement.x = -Game.map_grid.tile.width; }
 
       this.x += this._movement.x;
       this.y += this._movement.y;
+      this.trigger('Moved');
     });
   },
 
