@@ -114,6 +114,7 @@ Crafty.c('Monster', {
   },
 
   attackPlayerCharacter: function(data) {
+    console.log("monster ATTACK!");
     // this.log("monster with " + this.points() + " attack Player with " + data[0].obj.points());
     this.log('The ' + this.name() + ' attacks you');
     data[0].obj.sufferDamage(1);
@@ -236,6 +237,7 @@ Crafty.c('PlayerCharacter', {
       else if (goSouth) { this._movement.y = Game.map_grid.tile.height; }
       else if (goEast) { this._movement.x = Game.map_grid.tile.width; }
       else if (goWest) { this._movement.x = -Game.map_grid.tile.width; }
+      else { this.attackPlayerCharacter({obj: player}) }
 
       this.x += this._movement.x;
       this.y += this._movement.y;
