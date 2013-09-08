@@ -25,6 +25,8 @@ Game = {
 
 	// Initialize and start our game
 	start: function() {
+		console.log("Game.start");
+
 		// Start crafty and set a background color so that we can see it's working
 		Crafty.init(Game.width(), Game.height());
 		Crafty.background('rgb(0, 0, 0)');
@@ -32,4 +34,11 @@ Game = {
 		// Simply start the "Game" scene to get things going
 		Crafty.scene('Loading');		
 	}
+}
+
+$text_css = {
+'font-size': '24px',
+'font-family': 'courier',
+'color': '#FF6402',
+'text-align': 'center'
 }

@@ -97,7 +97,7 @@ Crafty.scene('Victory', function() {
 	Crafty.e('2D, DOM, Text')
 		.text('Victory')
 		.attr({ x: 10, y: 10, w: 100, h: 20 })
-		.css({color: '#FF6402'});
+		.css($text_css);
 
 	console.log("Victory");
 	setTimeout(function() { Crafty.scene('Game'); }, 10000);
@@ -112,7 +112,7 @@ Crafty.scene('Defeat', function() {
 	Crafty.e('2D, DOM, Text')
 		.text('Defeat')
 		.attr({ x: 10, y: 10, w: 100, h: 20 })
-		.css({color: '#FF6402'});
+		.css($text_css);
 
 	console.log("Defeat");
 	setTimeout(function() { Crafty.scene('Game'); }, 10000);
@@ -124,12 +124,14 @@ Crafty.scene('Defeat', function() {
 Crafty.scene('Loading', function(){
 	console.log("start loading scene");
 
+    Crafty.background("#000");
+
 	// Draw some text for the player to see in case the file
 	//  takes a noticeable amount of time to load
 	Crafty.e('2D, DOM, Text')
 		.text('Loading...')
 		.attr({ x: 0, y: Game.height()/2 - 24, w: Game.width() })
-		.css({color: '#FF6402'});
+		.css($text_css);
 
 	// Load our sprite map image
 	Crafty.load(['assets/caverna.png'], function() {
@@ -150,8 +152,7 @@ Crafty.scene('Loading', function(){
 			platoChest: [122, 2, 32, 32]
 		});
 
-
 	    // Now that our sprites are ready to draw, start the game
-	    Crafty.scene('Game');
+	    setTimeout("Crafty.scene('Game')", 2000);
 	})
 });
