@@ -29,6 +29,7 @@ Crafty.c('Log', {
   log: function(message) {
     this._logElement.value += "\n";
     this._logElement.value += message;
+    console.log(message);
   },
 
 });
@@ -237,7 +238,7 @@ Crafty.c('PlayerCharacter', {
       else if (goSouth) { this._movement.y = Game.map_grid.tile.height; }
       else if (goEast) { this._movement.x = Game.map_grid.tile.width; }
       else if (goWest) { this._movement.x = -Game.map_grid.tile.width; }
-      else { this.attackPlayerCharacter({obj: player}) }
+      else { this.attackPlayerCharacter([{obj: player}]) }
 
       this.x += this._movement.x;
       this.y += this._movement.y;

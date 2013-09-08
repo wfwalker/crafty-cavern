@@ -10,7 +10,7 @@ function _placeElementRandomly(inOccupied, inElementName) {
 		if (! inOccupied[x][y]) {
 			Crafty.e(inElementName).at(x, y);
 			inOccupied[x][y] = true;	
-			console.log("placed " + inElementName + " at " + x + ", " + y);
+			// console.log("placed " + inElementName + " at " + x + ", " + y);
 			return;				
 		}
 	}
@@ -92,6 +92,8 @@ Crafty.scene('Game', function() {
 // -------------
 // Tells the player when they've won and lets them start a new game
 Crafty.scene('Victory', function() {
+	console.log("start victory scene");
+
 	Crafty.e('2D, DOM, Text')
 		.text('Victory')
 		.attr({ x: 10, y: 10, w: 100, h: 20 })
@@ -105,6 +107,8 @@ Crafty.scene('Victory', function() {
 // -------------
 // Tells the player when they've lost and lets them start a new game
 Crafty.scene('Defeat', function() {
+	console.log("start defeat scene");
+
 	Crafty.e('2D, DOM, Text')
 		.text('Defeat')
 		.attr({ x: 10, y: 10, w: 100, h: 20 })
@@ -118,6 +122,8 @@ Crafty.scene('Defeat', function() {
 // -------------
 // Handles the loading of binary assets such as images and audio files
 Crafty.scene('Loading', function(){
+	console.log("start loading scene");
+
 	// Draw some text for the player to see in case the file
 	//  takes a noticeable amount of time to load
 	Crafty.e('2D, DOM, Text')
