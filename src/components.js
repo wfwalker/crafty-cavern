@@ -32,6 +32,10 @@ Crafty.c('Log', {
     console.log(message);
   },
 
+  clearLog: function() {
+    this._logElement.value = "";
+  }
+
 });
 
 // An "Actor" is an entity that is drawn in 2D on canvas
@@ -164,7 +168,7 @@ Crafty.c('Chest', {
 // where the Player can purchase Arrows and other goodies.
 Crafty.c('Castle', {
   init: function() {
-    this.requires('Actor, platoCastle');
+    this.requires('Actor, platoCastle, Solid');
   },
 });
 
@@ -181,6 +185,7 @@ Crafty.c('PlayerCharacter', {
       // creates a player that moves four ways and stops on collision with solid actors
     this.requires('Actor, Fourway, platoPlayer, Solid, Combatant, Collision, Log')
       .bind('KeyDown', function(e) {
+          this.clearLog();
           this._movement = {x: 0, y: 0};
 
           if(e.key == Crafty.keys['LEFT_ARROW']) {
@@ -200,6 +205,7 @@ Crafty.c('PlayerCharacter', {
       .onHit('Tree', this.fellTree)
       .onHit('Monster', this.attackMonster)
       .onHit('Chest', this.visitChest)
+      .onHit('Castle', this.visitCastle)
       .onHit('Solid', this.stopMovement)
       .bind('Died', this.playerDied)
       .bind('Change', function() {
@@ -270,7 +276,13 @@ Crafty.c('PlayerCharacter', {
     document.getElementById('gold').innerHTML = this._gold;
     chest.collect();
     this.log(Crafty('Chest').length + " chests left");
+  },
+
+  // Respond to this player visiting a chest
+  visitCastle: function(data) {
+    this.log("You visit the castle");
   }  
+
 });
 
 
