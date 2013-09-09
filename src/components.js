@@ -86,6 +86,7 @@ Crafty.c("Combatant", {
   },
 
   gainPoints: function (inPoints) {
+    console.log("gainPoints " + inPoints);
     this._points = this._points + inPoints;
     this._maximumPoints = Math.max(this._points, this._maximumPoints);
     this.trigger("Change");
@@ -151,7 +152,6 @@ Crafty.c('Monster', {
   monsterDied: function() {
     this.destroy();
     Crafty.trigger('MonsterKilled', this);    
-    this.log("You have slain the " + this.name()); 
   },
 
   attackPlayerCharacter: function(data) {
@@ -247,6 +247,10 @@ Crafty.c('PlayerCharacter', {
       .onHit('Chest', this.visitChest)
       .onHit('Castle', this.visitCastle)
       .onHit('Solid', this.stopMovement)
+      .bind('MonsterKilled', function (monster) {
+        this.gainPoints(monster.worth());
+        this.log("You have " + monster.killedVerb() + " the " + monster.name()); 
+      })
       .bind('Died', this.playerDied)
       .bind('Change', function() {
         document.getElementById('points').innerHTML = this.points() + "/" + this.maximumPoints();
