@@ -155,8 +155,6 @@ Crafty.c('Monster', {
   },
 
   attackPlayerCharacter: function(data) {
-    console.log("monster ATTACK!");
-    // this.log("monster with " + this.points() + " attack Player with " + data[0].obj.points());
     this.log('The ' + this.name() + ' attacks you');
     data[0].obj.sufferDamage(this.computeDamage());
   },
@@ -185,6 +183,8 @@ Crafty.c('Nomad', {
   init: function() {
     this.requires('Monster, platoHoplite');
     this.name('Nomad');
+    this.hitVerb('slashed');
+    this.killedVerb('bested');
     this.points(10);
     this.worth(2);
   },
@@ -310,7 +310,7 @@ Crafty.c('PlayerCharacter', {
   // Attacks the monster
   attackMonster: function(data) {
     monster = data[0].obj
-    this.log("You hit the " + monster.name());
+    this.log("You " + monster.hitVerb() + " the " + monster.name());
     monster.sufferDamage(this.computeDamage());
   },
 
