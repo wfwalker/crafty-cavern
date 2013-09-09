@@ -71,16 +71,23 @@ Crafty.c('Tree', {
 // When the point count decrements to zero, the combatant dies
 Crafty.c("Combatant", {
   _points: 0,
+  _maximumPoints: 0,
 
   points: function (inPoints) {
     if (!inPoints) return this._points;
     this._points = inPoints;
+    this._maximumPoints = Math.max(this._points, this._maximumPoints);
     this.trigger("Change");
     return this;
   },
 
+  maximumPoints: function () {
+    return this._maximumPoints;
+  },
+
   gainPoints: function (inPoints) {
     this._points = this._points + inPoints;
+    this._maximumPoints = Math.max(this._points, this._maximumPoints);
     this.trigger("Change");
   },
 
@@ -242,7 +249,7 @@ Crafty.c('PlayerCharacter', {
       .onHit('Solid', this.stopMovement)
       .bind('Died', this.playerDied)
       .bind('Change', function() {
-        document.getElementById('points').innerHTML = this.points();
+        document.getElementById('points').innerHTML = this.points() + "/" + this.maximumPoints();
       })
       .bind('Moved', this.attractMonsters);
 
