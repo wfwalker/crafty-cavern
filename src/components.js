@@ -96,6 +96,9 @@ Crafty.c("Combatant", {
 // A Monster causes all kinds of trouble
 Crafty.c('Monster', {
   _name: 'Monster',
+  _hitVerb: 'hit',
+  _killedVerb: 'killed',
+  _worth: 0,
 
   init: function() {
     this.requires('Actor, Combatant, Fourway, Solid, Collision, Log')
@@ -112,6 +115,32 @@ Crafty.c('Monster', {
     this._name = inName;
   },
 
+  worth: function (inWorth) {
+    if (!inWorth) return this._worth;
+    this._worth = inWorth;
+    this.trigger("Change");
+    return this;
+  },
+
+  hitVerb: function (inHitVerb) {
+    if (!inHitVerb) return this._hitVerb;
+    this._hitVerb = inHitVerb;
+    this.trigger("Change");
+    return this;
+  },
+
+  killedVerb: function (inKilledVerb) {
+    if (!inKilledVerb) return this._killedVerb;
+    this._killedVerb = inKilledVerb;
+    this.trigger("Change");
+    return this;
+  },
+
+  computeDamage: function() {
+    var damage = 3 * Math.random() + (this.points() / 8) + (this.worth() / 4);
+    return Math.round(damage);    
+  },
+
   monsterDied: function() {
     this.destroy();
     Crafty.trigger('MonsterKilled', this);    
@@ -122,7 +151,7 @@ Crafty.c('Monster', {
     console.log("monster ATTACK!");
     // this.log("monster with " + this.points() + " attack Player with " + data[0].obj.points());
     this.log('The ' + this.name() + ' attacks you');
-    data[0].obj.sufferDamage(1);
+    data[0].obj.sufferDamage(this.computeDamage());
   },
 
   // Stops the movement
@@ -143,10 +172,14 @@ Crafty.c('TRex', {
   },
 });
 
-Crafty.c('Hoplite', {
+
+// Nomad, slashed, bested, 10.0, 2.0, 0
+Crafty.c('Nomad', {
   init: function() {
     this.requires('Monster, platoHoplite');
-    this.name('Hoplite');
+    this.name('Nomad');
+    this.points(10);
+    this.worth(2);
   },
 });
 
@@ -216,6 +249,17 @@ Crafty.c('PlayerCharacter', {
     this.points(24);
   },
 
+  computeDamage: function() {
+    if (this.points() > 1) {
+      var swordStrength = 1;
+      var damage = (swordStrength * this.points() / (2.0 * Math.log(this.points()))) + (swordStrength + 3) * Math.random();
+      console.log("player computeDamage " + damage);
+      return Math.round(damage);
+    } else {
+      return 1;
+    }
+  },
+
   fellTree: function(data) {
     this.log("You felled the tree");
     tree = data[0].obj;
@@ -256,7 +300,7 @@ Crafty.c('PlayerCharacter', {
   attackMonster: function(data) {
     monster = data[0].obj
     this.log("You hit the " + monster.name());
-    monster.sufferDamage(1);
+    monster.sufferDamage(this.computeDamage());
   },
 
   // Stops the movement

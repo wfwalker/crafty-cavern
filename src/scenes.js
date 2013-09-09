@@ -62,7 +62,7 @@ Crafty.scene('Game', function() {
 
 	// Generate some monsters in random locations
 	for (var monsterCount = 0; monsterCount < 10; monsterCount++) {
-		_placeElementRandomly(this.occupied, 'Hoplite');
+		_placeElementRandomly(this.occupied, 'Nomad');
 	}
 
 	// Generate some chests in random locations
@@ -96,7 +96,7 @@ Crafty.scene('Victory', function() {
 
 	Crafty.e('2D, DOM, Text')
 		.text('Victory')
-		.attr({ x: 10, y: 10, w: 100, h: 20 })
+		.attr({ x: 0, y: Game.height()/2 - 24, w: Game.width() })
 		.css($text_css);
 
 	console.log("Victory");
@@ -111,7 +111,7 @@ Crafty.scene('Defeat', function() {
 
 	Crafty.e('2D, DOM, Text')
 		.text('Defeat')
-		.attr({ x: 10, y: 10, w: 100, h: 20 })
+		.attr({ x: 0, y: Game.height()/2 - 24, w: Game.width() })
 		.css($text_css);
 
 	console.log("Defeat");
