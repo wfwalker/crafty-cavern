@@ -170,25 +170,36 @@ Crafty.c('Monster', {
 
 });
 
-Crafty.c('TRex', {
-  init: function() {
-    this.requires('Monster, platoTrex');
-    this.name('T-Rex');
-  },
-});
+function createMonster(inSprite, inName, inHitVerb, inKilledVerb, inPoints, inWorth) {
+  Crafty.c(inName, {
+    init: function() {
+      this.requires('Monster, ' + inSprite);
+      this.name(inName);
+      this.hitVerb(inHitVerb);
+      this.killedVerb(inKilledVerb);
+      this.points(inPoints);
+      this.worth(inWorth);
+    },
+  });
+}
 
+var monstersTable = [
+  { sprite: 'platoCrab', name: 'Gnat', hitVerb: 'hit', killedVerb: 'smashed', points: 2, worth: 2 }, 
+  { sprite: 'platoHoplite', name: 'Nomad', hitVerb: 'slashed', killedVerb: 'bested', points: 10, worth: 2 }, 
+  { sprite: 'platoAlien', name: 'Spider', hitVerb: 'poked', killedVerb: 'squished', points: 13, worth: 4 }, 
+  { sprite: 'platoChavin', name: 'Moth', hitVerb: 'swatted at', killedVerb: 'flattened', points: 18, worth: 5 }, 
+  { sprite: 'platoTree2', name: 'Tree of Death', hitVerb: 'hacked at', killedVerb: 'felled', points: 20, worth: 3 }, 
+  { sprite: 'platoChavin', name: 'Snark', hitVerb: 'thwarted', killedVerb: 'disposed of', points: 28, worth: 9 }, 
+  { sprite: 'platoChavin', name: 'Bolotomus', hitVerb: 'stomped', killedVerb: 'dispatched', points: 28, worth: 9 }, 
+  { sprite: 'platoChavin', name: 'Nimbus', hitVerb: 'hit', killedVerb: 'killed', points: 36, worth: 11 }, 
+];
 
-// Nomad, slashed, bested, 10.0, 2.0, 0
-Crafty.c('Nomad', {
-  init: function() {
-    this.requires('Monster, platoHoplite');
-    this.name('Nomad');
-    this.hitVerb('slashed');
-    this.killedVerb('bested');
-    this.points(10);
-    this.worth(2);
-  },
-});
+for (var index = 0; index < monstersTable.length; index++) {
+  var monsterData = monstersTable[index];
+
+  console.log("initializing monster " + monsterData['name']);
+  createMonster(monsterData['sprite'], monsterData['name'], monsterData['hitVerb'], monsterData['killedVerb'], monsterData['points'], monsterData['worth']);
+}
 
 // A Chest has either gold or treasure items inside it
 // When the player visits the Chest, it is destroyed.
@@ -288,22 +299,29 @@ Crafty.c('PlayerCharacter', {
     var player = this;
 
     Crafty('Monster').each(function (index) {
-      var goNorth = (player.at().y < this.at().y);
-      var goSouth = (player.at().y > this.at().y);
-      var goEast = (player.at().x > this.at().x);
-      var goWest = (player.at().x < this.at().x);
+      var distance = Math.abs(player.at().y - this.at().y) + Math.abs(player.at().x - this.at().x);
 
-      this._movement = {x: 0, y: 0};
+      if (distance > 4) {
+        console.log("distant monster did not seek player");
+      } else {
+        console.log("monster seeks player");
+        var goNorth = (player.at().y < this.at().y);
+        var goSouth = (player.at().y > this.at().y);
+        var goEast = (player.at().x > this.at().x);
+        var goWest = (player.at().x < this.at().x);
 
-      if (goNorth) { this._movement.y = -Game.map_grid.tile.height ; }
-      else if (goSouth) { this._movement.y = Game.map_grid.tile.height; }
-      else if (goEast) { this._movement.x = Game.map_grid.tile.width; }
-      else if (goWest) { this._movement.x = -Game.map_grid.tile.width; }
-      else { this.attackPlayerCharacter([{obj: player}]) }
+        this._movement = {x: 0, y: 0};
 
-      this.x += this._movement.x;
-      this.y += this._movement.y;
-      this.trigger('Moved');
+        if (goNorth) { this._movement.y = -Game.map_grid.tile.height ; }
+        else if (goSouth) { this._movement.y = Game.map_grid.tile.height; }
+        else if (goEast) { this._movement.x = Game.map_grid.tile.width; }
+        else if (goWest) { this._movement.x = -Game.map_grid.tile.width; }
+        else { this.attackPlayerCharacter([{obj: player}]) }
+
+        this.x += this._movement.x;
+        this.y += this._movement.y;
+        this.trigger('Moved');        
+      }
     });
   },
 
