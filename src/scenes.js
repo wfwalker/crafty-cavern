@@ -16,6 +16,18 @@ function _placeElementRandomly(inOccupied, inElementName) {
 	}
 }
 
+function _getWorthyOpponentName(inPlayer) {
+	var thresholdPoints = inPlayer.points() / 2;
+
+	while (true) {
+		var index = Math.floor(Math.random() * monstersTable.length);
+		var candidate = monstersTable[index]
+		if (candidate['points'] < thresholdPoints) {
+			return candidate['name'];
+		}
+	}
+}
+
 // Game scene
 // -------------
 // Runs the core gameplay loop
@@ -62,7 +74,7 @@ Crafty.scene('Game', function() {
 
 	// Generate some monsters in random locations
 	for (var monsterCount = 0; monsterCount < 10; monsterCount++) {
-		_placeElementRandomly(this.occupied, 'Nomad');
+		_placeElementRandomly(this.occupied, _getWorthyOpponentName(this.player));
 	}
 
 	// Generate some chests in random locations
@@ -137,19 +149,41 @@ Crafty.scene('Loading', function(){
 	Crafty.load(['assets/caverna.png'], function() {
 		// Once the image is loaded...
 
-	    // Define the individual sprites in the image
-	    // Each one (spr_tree, etc.) becomes a component
-	    // These components' names are prefixed with "spr_"
-	    //  to remind us that they simply cause the entity
-	    //  to be drawn with a certain sprite
-
 		Crafty.sprite('assets/caverna.png', {
-			platoHoplite: [177, 36, 32, 32],
-			platoPlayer: [107, 70, 32, 32],
+			platoAlien: [2, 2, 16, 16],
+			platoBlob: [20, 2, 32, 32],
 			platoCastle: [54, 2, 32, 32],
-			platoTrex: [138, 104, 32, 32],
+			platoChavin: [88, 2, 32, 32],
+			platoChest: [122, 2, 32, 32],
+			platoCrab: [156, 2, 16, 16],
+			platoDarklord: [174, 2, 32, 32],
+			platoDemon: [208, 2, 32, 32,],
+			platoEmpty: [2, 36, 32, 32],
+			platoEyeball: [36, 36, 32, 32],
+			platoForkman: [71, 36, 16, 16],
+			platoGobber: [89, 36, 32, 32],
+			platoGrump: [123, 36, 16, 16],
+			platoGuy: [141, 36, 16, 16],
+			platoHippo: [159, 36, 16, 16],
+			platoHoplite: [177, 36, 32, 32],
+			platoJackolantern: [211, 36, 32, 32],
+			platoJubjub: [2, 70, 16, 16],
+			platoLarry: [20, 70, 16, 16],
+			platoMonster: [38, 70, 32, 32],
+			platoOpenChest: [72, 70, 32, 32],
+			platoPlayer: [107, 70, 32, 32],
+			platoRajah: [140, 70, 32, 32],
+			platoScary: [174, 70, 16, 16],
+			platoSnail: [192, 70, 32, 32],
+			platoSnake: [2, 104, 32, 32],
+			platoSplat: [36, 104, 32, 32],
+			platoTree2: [104, 104, 32, 32],
 			platoTree: [70, 104, 32, 32],
-			platoChest: [122, 2, 32, 32]
+			platoTree: [70, 104, 32, 32],
+			platoTrex: [138, 104, 32, 32],
+			platoUgly: [172, 104, 32, 32],
+			platoWahoo: [206, 104, 32, 32],
+			platoWraith: [2, 138, 32, 32]
 		});
 
 	    // Now that our sprites are ready to draw, start the game
