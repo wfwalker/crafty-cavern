@@ -239,18 +239,31 @@ Crafty.c('PlayerCharacter', {
           this.clearLog();
           this._movement = {x: 0, y: 0};
 
-          if(e.key == Crafty.keys['LEFT_ARROW']) {
+          if(e.key == Crafty.keys['A']) {
             this._movement.x = -Game.map_grid.tile.width;
-          } else if (e.key == Crafty.keys['RIGHT_ARROW']) {
-            this._movement.x = Game.map_grid.tile.width;
-          } else if (e.key == Crafty.keys['UP_ARROW']) {
+          } else if (e.key == Crafty.keys['Q']) {
+            this._movement.x = -Game.map_grid.tile.width;
             this._movement.y = -Game.map_grid.tile.height;
-          } else if (e.key == Crafty.keys['DOWN_ARROW']) {
+          } else if (e.key == Crafty.keys['W']) {
+            this._movement.y = -Game.map_grid.tile.height;
+          } else if (e.key == Crafty.keys['E']) {
+            this._movement.x = Game.map_grid.tile.width;
+            this._movement.y = -Game.map_grid.tile.height;
+          } else if (e.key == Crafty.keys['D']) {
+            this._movement.x = Game.map_grid.tile.width;
+          } else if (e.key == Crafty.keys['C']) {
+            this._movement.x = Game.map_grid.tile.width;
+            this._movement.y = Game.map_grid.tile.height;
+          } else if (e.key == Crafty.keys['X']) {
+            this._movement.y = Game.map_grid.tile.height;
+          } else if (e.key == Crafty.keys['Z']) {
+            this._movement.x = -Game.map_grid.tile.width;
             this._movement.y = Game.map_grid.tile.height;
           }
 
           this.x += this._movement.x;
           this.y += this._movement.y;
+          console.log("player " + this.x + ", " + this.y);
           this.trigger('Moved');
       })
       .onHit('Tree', this.fellTree)
@@ -301,7 +314,7 @@ Crafty.c('PlayerCharacter', {
     Crafty('Monster').each(function (index) {
       var distance = Math.abs(player.at().y - this.at().y) + Math.abs(player.at().x - this.at().x);
 
-      if (distance > 4) {
+      if (distance > 6) {
         console.log("distant monster did not seek player");
       } else {
         console.log("monster seeks player");
@@ -339,6 +352,7 @@ Crafty.c('PlayerCharacter', {
       this.x -= this._movement.x;
       this.y -= this._movement.y;
     }
+    console.log("STOP MOVEMENT player " + this.x + ", " + this.y);
   },
 
   // Respond to this player visiting a chest
