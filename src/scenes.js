@@ -121,13 +121,14 @@ Crafty.scene('Victory', function() {
 Crafty.scene('Defeat', function() {
 	console.log("start defeat scene");
 
+    Crafty.background("#000");	
+
 	Crafty.e('2D, DOM, Text')
 		.text('Defeat')
 		.attr({ x: 0, y: Game.height()/2 - 24, w: Game.width() })
 		.css($text_css);
 
-	console.log("Defeat");
-	setTimeout(function() { Crafty.scene('Game'); }, 10000);
+	setTimeout(function() { Crafty.scene('Game'); }, 20000);
 });
 
 // Loading scene
