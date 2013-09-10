@@ -327,9 +327,13 @@ Crafty.c('PlayerCharacter', {
 
         if (goNorth) { this._movement.y = -Game.map_grid.tile.height ; }
         else if (goSouth) { this._movement.y = Game.map_grid.tile.height; }
-        else if (goEast) { this._movement.x = Game.map_grid.tile.width; }
+
+        if (goEast) { this._movement.x = Game.map_grid.tile.width; }
         else if (goWest) { this._movement.x = -Game.map_grid.tile.width; }
-        else { this.attackPlayerCharacter([{obj: player}]) }
+
+        if ((player.at().x == this.at().x) && (player.at().y == this.at().y)) {
+          this.attackPlayerCharacter([{obj: player}])
+        }
 
         this.x += this._movement.x;
         this.y += this._movement.y;
