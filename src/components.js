@@ -86,13 +86,14 @@ Crafty.c("Combatant", {
   },
 
   gainPoints: function (inPoints) {
-    console.log("gainPoints " + inPoints);
+    console.log(this.name() + " gainPoints " + inPoints);
     this._points = this._points + inPoints;
     this._maximumPoints = Math.max(this._points, this._maximumPoints);
     this.trigger("Change");
   },
 
   sufferDamage: function (inDamagePoints) {
+    console.log(this.name() + " suffer damage " + inDamagePoints);
     this._points = this._points - inDamagePoints;
     this.trigger("Change");
     if (this._points <= 0) {
@@ -233,7 +234,7 @@ Crafty.c('PlayerCharacter', {
     this._inUseItems = [];
     this._unusedItems = [];
 
-      // creates a player that moves four ways and stops on collision with solid actors
+    // creates a player that moves four ways and stops on collision with solid actors
     this.requires('Actor, Fourway, platoPlayer, Solid, Combatant, Collision, Log')
       .bind('KeyDown', function(e) {
           this.clearLog();
@@ -263,7 +264,7 @@ Crafty.c('PlayerCharacter', {
 
           this.x += this._movement.x;
           this.y += this._movement.y;
-          console.log("player " + this.x + ", " + this.y);
+          // console.log("player " + this.x + ", " + this.y);
           this.trigger('Moved');
       })
       .onHit('Tree', this.fellTree)
@@ -284,11 +285,14 @@ Crafty.c('PlayerCharacter', {
     this.points(24);
   },
 
+  name: function() {
+    return 'Player';
+  },
+
   computeDamage: function() {
     if (this.points() > 1) {
       var swordStrength = 1;
       var damage = (swordStrength * this.points() / (2.0 * Math.log(this.points()))) + (swordStrength + 3) * Math.random();
-      console.log("player computeDamage " + damage);
       return Math.round(damage);
     } else {
       return 1;
@@ -315,7 +319,7 @@ Crafty.c('PlayerCharacter', {
       var distance = Math.abs(player.at().y - this.at().y) + Math.abs(player.at().x - this.at().x);
 
       if (distance > 6) {
-        console.log("distant monster did not seek player");
+        // console.log("distant monster did not seek player");
       } else {
         console.log("monster seeks player");
         var goNorth = (player.at().y < this.at().y);
