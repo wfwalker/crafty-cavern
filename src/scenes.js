@@ -59,7 +59,7 @@ Crafty.scene('Game', function() {
 				// Place a wall entity at the current tile
 				Crafty.e('Wall').at(x, y);
 				this.occupied[x][y] = true;
-			} else if (Math.random() < 0.06 && !this.occupied[x][y]) {
+			} else if (Math.random() < 0.17 && !this.occupied[x][y]) {
 				// Place a bush entity at the current tile
 				Crafty.e('Tree').at(x, y);
 				this.occupied[x][y] = true;
