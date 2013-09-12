@@ -152,11 +152,13 @@ Crafty.c('Monster', {
 
   monsterDied: function() {
     this.destroy();
+    console.log(Crafty('Monster').length + " monsters left");    
     Crafty.trigger('MonsterKilled', this);    
   },
 
   attackPlayerCharacter: function(data) {
-    this.log('The ' + this.name() + ' attacks you');
+    var damage = this.computeDamage();
+    this.log('The ' + this.name() + ' hit you for ' + damage + ' points');
     data[0].obj.sufferDamage(this.computeDamage());
   },
 
@@ -348,9 +350,10 @@ Crafty.c('PlayerCharacter', {
 
   // Attacks the monster
   attackMonster: function(data) {
-    monster = data[0].obj
-    this.log("You " + monster.hitVerb() + " the " + monster.name());
-    monster.sufferDamage(this.computeDamage());
+    var monster = data[0].obj;
+    var damage = this.computeDamage();
+    this.log("You " + monster.hitVerb() + " the " + monster.name() + " for " + damage + " points");
+    monster.sufferDamage(damage);
   },
 
   // Stops the movement
