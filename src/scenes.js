@@ -28,6 +28,22 @@ function _getWorthyOpponentName(inPlayer) {
 	}
 }
 
+function _getMostWorthyOpponentName(inPlayer) {
+	var thresholdPoints = inPlayer.points() / 2;
+	var index = 0;
+
+	while (true) {
+		var candidate = monstersTable[index]
+		if (candidate['points'] >= thresholdPoints) {
+			return candidate['name'];
+		}
+		else {
+			index = index + 1;
+		}
+	}
+}
+
+
 // Game scene
 // -------------
 // Runs the core gameplay loop
@@ -72,8 +88,19 @@ Crafty.scene('Game', function() {
 		_placeElementRandomly(this.occupied, 'Castle');
 	}
 
-	// Generate some monsters in random locations
-	for (var monsterCount = 0; monsterCount < 10; monsterCount++) {
+	this.missionQuota = Math.round(Math.log(this.player.points()) + 3 * Math.random());
+	this.missionTarget = _getMostWorthyOpponentName(this.player);
+	this.monsterPopulation = Math.round(3 * this.missionQuota + 2 * Math.random() * this.missionQuota);
+
+	this.player.log("Your mission is to kill " + this.missionQuota + " " + this.missionTarget + "s for the king");
+
+	// Generate some mission quota monsters in random locations
+	for (var monsterCount = 0; monsterCount < this.missionQuota; monsterCount++) {
+		_placeElementRandomly(this.occupied, this.missionTarget);
+	}
+
+	// generate enough other monsters to fill out the population
+	for (var monsterCount = 0; monsterCount < this.monsterPopulation - this.missionQuota; monsterCount++) {
 		_placeElementRandomly(this.occupied, _getWorthyOpponentName(this.player));
 	}
 
